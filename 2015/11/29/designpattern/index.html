@@ -1,0 +1,540 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>JS设计模式之我见(-) | 清风徐来</title>
+  <meta name="author" content="清风徐来">
+  
+  <meta name="description" content="清风徐来 | javascript | web | 前端">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="JS设计模式之我见(-)"/>
+  <meta property="og:site_name" content="清风徐来"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="清风徐来" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="/js/jquery.min.js"></script>
+  
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-45019001-1', 'topdna.org');
+  ga('send', 'pageview');
+
+</script>
+
+
+</head>
+
+
+<body>
+  <!--[if lte IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://storage.ie6countdown.com/assets/100/images/banners/warning_bar_0027_Simplified Chinese.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today." style='margin-left:auto;margin-right:auto;display: block;'/></a></div> <![endif]-->
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">清风徐来</a></h1>
+  <h2><a href="/">阅读，思考，行动</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">首页</a></li>
+    
+      <li><a href="/categories/web/">Web前端</a></li>
+    
+      <li><a href="/categories/essay/">随感</a></li>
+    
+      <li><a href="/archives">归档</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+    <div class="gallery">
+  <div class="photoset">
+    
+      <img src="">
+    
+  </div>
+  <div class="control">
+    <div class="prev"></div>
+    <div class="next"></div>
+  </div>
+</div>
+  
+  <div class="post-content">
+    <header>
+      
+        <time datetime="2015-11-29T12:20:00.000Z"><a href="/2015/11/29/designpattern/">Nov 29 2015</a></time>
+      
+      
+  
+    <h1 class="title">JS设计模式之我见(-)</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>在我看来，一门语言之所以要探索设计模式，主要是因为语言本身存在某种缺陷不利于开发人员解决问题，需要一种通用的解决方案降低开发的难度。所以不同的设计模式对于不同语言的适用性是不一样的，本文旨在探讨JS人员能够常用的设计模式。<br><a id="more"></a></p>
+<h2 id="1、Module模式">1、Module模式</h2><p>我把这个模式排在第一位，因为这种模式已经是前端届必不可少的开发方式了，极大地提高了开发效率。</p>
+<p>这种模式目前主要有以下几种方案</p>
+<ul>
+<li>对象字面量表示法</li>
+<li>AMD模块（RequireJS）</li>
+<li>CMD模块（SeaJS）</li>
+<li>CommonJS模块（BravoJS）</li>
+<li>ECMAScript Harmony模块</li>
+</ul>
+<p>目前国内我们常用的是玉伯的SeaJS，五个API包含了这个方案的大部分内容，define，require require.async,exports,module.exports.</p>
+<p>模块的定义如下所示：</p>
+<pre><code>define(<span class="function"><span class="keyword">function</span><span class="params">(require, exports, module)</span> </span>{
+    <span class="comment">//模块代码</span>
+
+    <span class="comment">//对外提供接口</span>
+      <span class="keyword">return</span> {
+        foo: <span class="string">'bar'</span>,
+        doSomething: <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{}
+      };
+
+});
+</code></pre><p>假设上面定义的模块文件命名为a.js,我们使用该模块定义的api如下所示：</p>
+<pre><code><span class="comment">// b.js</span>
+define(<span class="function"><span class="keyword">function</span><span class="params">(<span class="keyword">require</span>, exports, <span class="keyword">module</span>)</span> <span class="comment">{
+
+      var a = require('./a');
+
+      //调用a模块的方法
+      a.doSomething();
+
+}</span>);</span>
+</code></pre><p>简单的两段代码就说明了如何应用SeaJS，这种方案很好理解，应用后能够做到很好的解耦，组织代码，提高代码复用，提升团队开发效率。</p>
+<p>Module是任何强大应用程序架构中不可或缺的一部分，H5移动时代，更需要这种模式来帮助我们清晰的分离和组织项目中的代码单元，值得应用。</p>
+<h2 id="2、单例模式">2、单例模式</h2><p>单例模式是除了Module模式，我用的最多的模式了。</p>
+<p>单例模式优点：</p>
+<ul>
+<li>提供单一访问点，唯一入口</li>
+<li>方便单个文件组织代码</li>
+<li>避免初始化过多实例</li>
+<li>避免声明过多变量</li>
+</ul>
+<p>单例模式的实现方式也有几种</p>
+<p>a.对象字面量</p>
+<pre><code><span class="keyword">var</span> mySingleton = {
+    property1: <span class="string">"something"</span>,
+    property2: <span class="string">"something else"</span>,
+    init : <span class="function"><span class="keyword">function</span><span class="params">()</span></span>{
+        <span class="comment">//初始化</span>
+    },
+    method1: <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>{
+        <span class="built_in">console</span>.log(<span class="string">'hello world'</span>);
+    }
+};
+</code></pre><p>上面这种是最基本的方式，可以通过函数闭包的方式只暴露想暴露的public成员和方法，样例如下</p>
+<pre><code><span class="keyword">var</span> mySingleton = <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>{
+
+    <span class="comment">/* 这里声明私有变量和方法 */</span>
+    <span class="keyword">var</span> privateVariable = <span class="string">'something private'</span>;
+    <span class="function"><span class="keyword">function</span> <span class="title">showPrivate</span><span class="params">()</span> </span>{
+        <span class="built_in">console</span>.log(privateVariable);
+    }
+
+    <span class="comment">/* 公有变量和方法（可以访问私有变量和方法） */</span>
+    <span class="keyword">return</span> {
+        publicMethod: <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>{
+            showPrivate();
+        },
+        publicVar: <span class="string">'the public can see this!'</span>
+    };
+};
+
+<span class="keyword">var</span> single = mySingleton();
+</code></pre><p>b.构造函数唯一实例</p>
+<pre><code><span class="function"><span class="keyword">function</span> <span class="title">Universe</span><span class="params">()</span> </span>{
+
+    <span class="comment">// 判断是否存在实例</span>
+    <span class="keyword">if</span> (<span class="keyword">typeof</span> Universe.instance === <span class="string">'object'</span>) {
+        <span class="keyword">return</span> Universe.instance;
+    }
+
+    <span class="comment">// 其它内容</span>
+    <span class="keyword">this</span>.start_time = <span class="number">0</span>;
+    <span class="keyword">this</span>.bang = <span class="string">"Big"</span>;
+
+    <span class="comment">// 缓存</span>
+    Universe.instance = <span class="keyword">this</span>;
+
+    <span class="comment">// 隐式返回this</span>
+}
+</code></pre><p>上面的构造函数，初始化实例只会有一个。</p>
+<pre><code><span class="reserved">var</span> uni = <span class="keyword">new</span> Universe();
+<span class="reserved">var</span> uni2 = <span class="keyword">new</span> Universe();
+<span class="built_in">console</span>.log(uni === uni2); <span class="regexp">//</span> <span class="literal">true</span>
+</code></pre><h2 id="3-外观模式">3.外观模式</h2><p>当创建外观时，向外界展示的外表可能掩盖了一个非常不同的现实。</p>
+<p>外观模式的优点：</p>
+<ul>
+<li>抽象出API，供上层调用，减少了复杂度</li>
+<li>适合我们现在常用的模块式开发模式</li>
+<li>分层过后，不必花太多的时间关注底层细节，更多的精力关注业务实现 </li>
+</ul>
+<p>外观模式较多用于Javascript类库，通过它封装一些接口用于兼容多浏览器，外观模式可以让我们间接调用子系统，从而避免因直接访问子系统而产生不必要的错误</p>
+<p>下面是一段常见代码，使用外观模式来简化用于监听跨浏览器事件的接口</p>
+<pre><code><span class="keyword">var</span> addMyEvent = <span class="function"><span class="keyword">function</span> <span class="params">(el, ev, fn)</span> </span>{
+    <span class="keyword">if</span> (el.addEventListener) {
+        el.addEventListener(ev, fn, <span class="literal">false</span>);
+    } <span class="keyword">else</span> <span class="keyword">if</span> (el.attachEvent) {
+        el.attachEvent(<span class="string">'on'</span> + ev, fn);
+    } <span class="keyword">else</span> {
+        el[<span class="string">'on'</span> + ev] = fn;
+    }
+}; 
+</code></pre><p>外观模式的优势是易于使用，本身比较轻量级。但是会有性能问题，因为每次调用都要检测功能的可用性。所以在使用外观模式时，要试着了解涉及的任何性能成本，并确认是否值得抽象。</p>
+<h2 id="4-观察者模式">4.观察者模式</h2><p>观察者模式定义了一种一对多的关系，让多个观察者同时监听某一个主题对象，这个主题对象的状态发生变化时就会通知所有的观察者对象，使得它们能够自动更新自己。</p>
+<p>观察者模式的优点：</p>
+<ul>
+<li>实现解耦</li>
+<li>适用复杂场景</li>
+<li>支持广播通信，自动通知已经订阅的对象</li>
+</ul>
+<p>JS里对观察者模式的实现是通过回调来实现的，我们来先定义一个pubsub对象，其内部包含了3个方法：订阅、退订、发布。</p>
+<pre><code><span class="keyword">var</span> Pubsub = {};
+(<span class="function"><span class="keyword">function</span><span class="params">(p)</span></span>{
+    <span class="keyword">var</span> topics = [];
+    <span class="keyword">var</span> subUid = -<span class="number">1</span>;
+    <span class="built_in">console</span>.log(p)
+    <span class="comment">//订阅方法</span>
+    p.subscribe = <span class="function"><span class="keyword">function</span><span class="params">(topic,func)</span></span>{
+        <span class="keyword">if</span>(!topics[topic]){
+            topics[topic] = [];
+        }
+
+        <span class="keyword">var</span> token = (++subUid).toString();
+
+        topics[topic].push({
+            token : token,
+            func : func
+        })
+
+        <span class="keyword">return</span> token;
+    }
+    <span class="comment">//发布方法</span>
+    p.publish = <span class="function"><span class="keyword">function</span><span class="params">(topic,args)</span></span>{
+        <span class="keyword">if</span>(!topics[topic]){
+            <span class="keyword">return</span> <span class="literal">false</span>;
+        }
+
+        setTimeout(<span class="function"><span class="keyword">function</span><span class="params">()</span></span>{
+            <span class="keyword">var</span> subscribers = topics[topic];
+            <span class="keyword">var</span> len = subscribers?subscribers.length : <span class="number">0</span>;
+
+            <span class="keyword">while</span>(len--){
+                subscribers[len].func(topic,args);
+            }
+        },<span class="number">0</span>)
+
+        <span class="keyword">return</span> <span class="literal">true</span>;
+    }
+
+    <span class="comment">//取消订阅</span>
+    p.unsubscribers = <span class="function"><span class="keyword">function</span><span class="params">(token)</span></span>{
+        <span class="keyword">for</span>(<span class="keyword">var</span> m <span class="keyword">in</span> topics){
+            <span class="keyword">if</span> (topics[m]) {
+                <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>, j = topics[m].length; i &lt; j; i++) {
+                    <span class="keyword">if</span> (topics[m][i].token === token) {
+                        topics[m].splice(i, <span class="number">1</span>);
+                        <span class="keyword">return</span> token;
+                    }
+                }
+            }
+        }
+
+        <span class="keyword">return</span> <span class="literal">false</span>;
+    }
+} (Pubsub))
+</code></pre><p>使用方式如下：</p>
+<pre><code><span class="comment">//来，订阅一个</span>
+pubsub.subscribe(<span class="string">'example1'</span>, <span class="function"><span class="keyword">function</span> <span class="params">(topics, data)</span> </span>{
+    <span class="built_in">console</span>.log(topics + <span class="string">": "</span> + data);
+});
+
+<span class="comment">//发布通知</span>
+pubsub.publish(<span class="string">'example1'</span>, <span class="string">'hello world!'</span>);
+pubsub.publish(<span class="string">'example1'</span>, [<span class="string">'test'</span>, <span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>]);
+pubsub.publish(<span class="string">'example1'</span>, [{ <span class="string">'color'</span>: <span class="string">'blue'</span> }, { <span class="string">'text'</span>: <span class="string">'hello'</span>}]);
+</code></pre><p>当我们遇到一个对象改变，一推对象需要跟着改变，但是不知道具体要改变多少个对象的场景时，可以考虑使用观察者模式。</p>
+<h2 id="5-策略模式">5.策略模式</h2><p>策略模式定义了算法家族，分别封装起来，让他们之间可以互相替换，此模式算法的变化不会影响到使用算法的用户。</p>
+<p>策略模式的优点：</p>
+<ul>
+<li>提供一个框架</li>
+<li>算法可以自定义更换，做到解耦 </li>
+</ul>
+<p>策略模式我们最常用的场景就是表单校验的各种方法定制。</p>
+<pre><code><span class="keyword">var</span> validator = {
+
+    <span class="comment">// 所有可以的验证规则处理类存放的地方，后面会单独定义</span>
+    types: {},
+
+    <span class="comment">// 验证类型所对应的错误消息</span>
+    messages: [],
+
+    <span class="comment">// 当然需要使用的验证类型</span>
+    config: {},
+
+    <span class="comment">// 暴露的公开验证方法</span>
+    <span class="comment">// 传入的参数是 key =&gt; value对</span>
+    validate: function (data) {
+
+        <span class="keyword">var</span> i, msg, <span class="class"><span class="keyword">type</span>, <span class="title">checker</span>, <span class="title">result_ok</span>;</span>
+
+        <span class="comment">// 清空所有的错误信息</span>
+        <span class="keyword">this</span>.messages = [];
+
+        <span class="keyword">for</span> (i in data) {
+            <span class="keyword">if</span> (data.hasOwnProperty(i)) {
+
+                <span class="class"><span class="keyword">type</span> =</span> <span class="keyword">this</span>.config[i];  <span class="comment">// 根据key查询是否有存在的验证规则</span>
+                checker = <span class="keyword">this</span>.types[<span class="class"><span class="keyword">type</span>];</span> <span class="comment">// 获取验证规则的验证类</span>
+
+                <span class="keyword">if</span> (!<span class="class"><span class="keyword">type</span>) {</span>
+                    <span class="keyword">continue</span>; <span class="comment">// 如果验证规则不存在，则不处理</span>
+                }
+                <span class="keyword">if</span> (!checker) { <span class="comment">// 如果验证规则类不存在，抛出异常</span>
+                    <span class="keyword">throw</span> {
+                        name: <span class="string">"ValidationError"</span>,
+                        message: <span class="string">"No handler to validate type "</span> + <span class="class"><span class="keyword">type</span>
+</span>                    };
+                }
+
+                result_ok = checker.validate(data[i]); <span class="comment">// 使用查到到的单个验证类进行验证</span>
+                <span class="keyword">if</span> (!result_ok) {
+                    msg = <span class="string">"Invalid value for *"</span> + i + <span class="string">"*, "</span> + checker.instructions;
+                    <span class="keyword">this</span>.messages.push(msg);
+                }
+            }
+        }
+        <span class="keyword">return</span> <span class="keyword">this</span>.hasErrors();
+    },
+
+    <span class="comment">// helper</span>
+    hasErrors: function () {
+        <span class="keyword">return</span> <span class="keyword">this</span>.messages.length !== <span class="number">0</span>;
+    }
+};
+</code></pre><p>定义好策略处理类过后，我们就可以定义types里面的各种验证类了，这里举几个例子</p>
+<pre><code><span class="comment">// 验证给定的值是否不为空</span>
+validator.types.isNonEmpty = {
+    validate: <span class="function"><span class="keyword">function</span> <span class="params">(value)</span> </span>{
+        <span class="keyword">return</span> value !== <span class="string">""</span>;
+    },
+    instructions: <span class="string">"传入的值不能为空"</span>
+};
+
+<span class="comment">// 验证给定的值是否是数字</span>
+validator.types.isNumber = {
+    validate: <span class="function"><span class="keyword">function</span> <span class="params">(value)</span> </span>{
+        <span class="keyword">return</span> !<span class="built_in">isNaN</span>(value);
+    },
+    instructions: <span class="string">"传入的值只能是合法的数字，例如：1, 3.14 or 2010"</span>
+};
+
+<span class="comment">// 验证给定的值是否只是字母或数字</span>
+validator.types.isAlphaNum = {
+    validate: <span class="function"><span class="keyword">function</span> <span class="params">(value)</span> </span>{
+        <span class="keyword">return</span> !<span class="regexp">/[^a-z0-9]/i</span>.test(value);
+    },
+    instructions: <span class="string">"传入的值只能保护字母和数字，不能包含特殊字符"</span>
+};
+</code></pre><p>上面就是本文所要探讨的五种模式，都是我们最常用到的，能够很好的提升我们的开发效率。</p>
+
+      
+    </div>
+    <footer>
+      
+
+        
+        
+          <div class="alignright post-nav">
+            <em>下一篇: </em><a href="/2015/08/16/solveproblemmethod/">科学解决问题思想</a>
+          </div>
+          <div class="clearfix"></div>
+        
+
+        
+          <div class="copyright">
+            
+              <span class="claim">版权声明：自由转载-非商用-无演绎-保持署名 @ Creative Commons BY-NC-ND 3.0</span>
+            
+            
+              <span class="from-link">
+                <em>本文链接地址:</em>
+                <a href="/2015/11/29/designpattern/">
+                  http://coolbreeze.cn/2015/11/29/designpattern/
+                </a>
+              </span>
+            
+          </div>
+        
+        
+  
+  <div class="categories">
+    <a href="/categories/essay/">essay</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/设计模式/">设计模式</a>
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="" data-title="" data-url=""></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"skylineed"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0]
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+<nav id="pagination" >
+    
+    
+    <a href="/2015/08/16/solveproblemmethod/" class="alignright next" >下一页</a>
+    
+    <div class="clearfix"></div>
+</nav>
+</section>
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="text" name="q" results="0" placeholder="搜一下">
+    <i class="icon-search"></i>
+    <input type="hidden" name="q" value="site:coolbreeze.cn">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2015/11/29/designpattern/">JS设计模式之我见(-)</a>
+      </li>
+    
+      <li>
+        <a href="/2015/08/16/solveproblemmethod/">科学解决问题思想</a>
+      </li>
+    
+      <li>
+        <a href="/2015/05/12/mongodb-connect/">mongodb连接池使用问题</a>
+      </li>
+    
+      <li>
+        <a href="/2015/03/29/mongoose-connect/">mongoose.createConnection()和mongoose.connect()使用问题</a>
+      </li>
+    
+      <li>
+        <a href="/2015/03/07/timemanagement/">时间管理实践总结</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/essay/">essay</a><small>5</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/mongodb/" style="font-size: NaNpx;">mongodb</a><a href="/tags/mongoose/" style="font-size: NaNpx;">mongoose</a><a href="/tags/时间管理/" style="font-size: NaNpx;">时间管理</a><a href="/tags/解决问题/" style="font-size: NaNpx;">解决问题</a><a href="/tags/设计模式/" style="font-size: NaNpx;">设计模式</a>
+  </div>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <div id="go-pg-top"><i class="icon-arrow-up"></i></div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2015 清风徐来
+  
+</div>
+<div class="clearfix"></div>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-60454738-1', 'auto');
+  ga('send', 'pageview');
+
+</script></footer>
+  <script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'skylineed.duoshuo.com';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript" charset="utf-8" src="/js/page.js"></script>
+
+</body>
+
+<div id="fb-root"></div>
+
+</html>
