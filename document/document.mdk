@@ -1,0 +1,19 @@
+Title         : keep-alive模式下如何判断一条请求结束
+Author        : skylineed
+
+[TITLE]
+
+引子：
+研究GZIP压缩效率的问题时发现，我chrome抓到的请求显示的Content-Length大小和文件的大小一样
+
+![3175.tmp]
+[3175.tmp]: images/3175.tmp.jpg "3175.tmp" { width:auto; max-width:90% }
+
+很纳闷，为什么开启了GZIP后，完全没压缩，研究了下发现原来用了fiddler代理，fiddler直接给Decode了，把fiddler关掉后，再看发现
+
+![4C66.tmp]
+
+[4C66.tmp]: images/4C66.tmp.jpg "4C66.tmp" { width:auto; max-width:90% }
+
+已经没有了Content-Length这个字段了，那么问题来了为什么没有这个字段呢？
+
